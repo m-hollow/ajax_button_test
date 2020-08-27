@@ -1,0 +1,93 @@
+{% extends 'buttons/base.html' %}
+{% block title %}Button Ajax Tester - Movie Page{% endblock title %}
+
+{% block content %}
+
+
+
+
+<div class="shadow p-3 mb-5 bg-light rounded">
+        <div class="mb-2 border-bottom">
+          <h5>Your details for <i>{{ movie.name }}</i></h5>
+        </div>
+        {% if not box_data %}
+          <ul>
+            <li class="mb-2">
+              <form action="{% url 'buttons:create_box' movie.id actions.mark_seen %}" method='post'>
+                {% csrf_token %}
+                  <button name='submit' class='btn btn-outline-dark btn-sm'>Mark as Seen</button>
+              </form>
+            </li>
+            <li class="mb-2">
+              <form action="{% url 'buttons:create_box' movie.id actions.mark_favorite %}" method='post'>
+                {% csrf_token %}
+                  <button name='submit' class='btn btn-outline-dark btn-sm'>Add to Favorites</button>
+              </form>
+            </li>
+            <li class="mb-2">
+              <form action="{% url 'buttons:create_box' movie.id actions.mark_watch %}" method='post'>
+                {% csrf_token %}
+                  <button name='submit' class='btn btn-outline-dark btn-sm'>Add to Watchlist</button>
+              </form>
+            </li>
+          </ul>
+        {% else %}
+        <ul>
+          {% if box_data.seen %}
+            <li class="mb-2">You've seen this movie, nice!
+              <span class="float-right">
+                <form action="{% url 'buttons:update_box' box_data.id actions.unmark_seen %}" method='post'>{% csrf_token %}
+                  <button name='submit' class='btn btn-sm btn-link'><i>Mark Unseen</i></button>
+                </form>
+              </span>
+            </li>
+          {% else %}
+            <li class="mb-2">
+              <form action="{% url 'buttons:update_box' box_data.id actions.mark_seen %}" method='post'>
+                {% csrf_token %}
+                  <button name='submit' class='btn btn-outline-dark btn-sm'>Mark as Seen</button>
+              </form>
+            </li>
+          {% endif %}
+
+          {% if box_data.favorite %}
+            <li class="mb-2">This movie is in your <b>Favorites</b> list.
+             <span class="float-right">
+                <form action="{% url 'buttons:update_box' box_data.id actions.unmark_favorite %}" method='post'>{% csrf_token %}
+                  <button name='submit' class='btn btn-sm btn-link'><i>Remove</i></button>
+                </form>
+              </span>
+            </li>
+          {% else %}
+            <li class="mb-2">
+              <form action="{% url 'buttons:update_box' box_data.id actions.mark_favorite %}" method='post'>
+                {% csrf_token %}
+                  <button name='submit' class='btn btn-outline-dark btn-sm'>Add to Favorites</button>
+              </form>
+            </li>
+          {% endif %}
+
+          {% if box_data.watch %}
+            <li class="mb-2">This movie is in your <b>Watchlist</b>.
+              <span class="float-right">
+                <form action="{% url 'buttons:update_box' box_data.id actions.unmark_watch %}" method='post'>{% csrf_token %}
+                  <button name='submit' class='btn btn-sm btn-link'><i>Remove</i></button>
+                </form>
+              </span>
+            </li>
+          {% else %}
+            <li class="mb-2">
+              <form action="{% url 'buttons:update_box' box_data.id actions.mark_watch %}" method='post'>
+                {% csrf_token %}
+                  <button name='submit' class='btn btn-outline-dark btn-sm'>Add to Watchlist</button>
+              </form>
+            </li>
+          {% endif %}
+        {% endif %}
+        </ul>
+        </div>
+
+{% endblock content %}
+
+{% block javascript %}
+{% endblock javascript %}

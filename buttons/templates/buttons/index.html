@@ -1,0 +1,15 @@
+{% extends 'buttons/base.html' %}
+{% block title %}Ajax Test{% endblock title %}
+
+{% block content %}
+
+<ul>
+{% for movie in movies %}
+  <li><a href="{% url 'buttons:movie' movie.id %}">{{ movie }}</a></li>
+{% endfor %}
+
+
+{% endblock content %}
+
+{% block javascript %}
+{% endblock javascript %}
