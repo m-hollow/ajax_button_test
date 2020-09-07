@@ -1,0 +1,159 @@
+{% extends 'buttons/base.html' %}
+{% load static %}
+{% block title %}Button Ajax Tester - Movie Page{% endblock title %}
+{% block content %}
+
+<div class="container">
+ <div class="row">
+  <div class="col-6">
+    <img class="poster" src="{% static 'images/key_largo.jpg' %}">
+  </div>
+  <div class="col-6">
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="shadow p-3 mb-5 bg-light rounded">
+      <div class="mb-2 border-bottom">
+        <h5>Your details for <i>{{ movie.name }}</i></h5>
+      </div>
+      {% if box_data %}
+      <ul>
+        {% if box_data.seen %}
+          <li><span class="seen_status">You've seen this film, nice!</span><input type="button" class="btn btn-outline-dark btn-sm float-right" id="seen" movie_id="{{ movie.id }}" value="Remove Seen"></li>
+        {% else %}
+          <li><span class="seen_status">You haven't seen this film.</span><input type="button" class="btn btn-outline-dark btn-sm float-right" id="seen" movie_id="{{ movie.id }}" value="Mark as Seen"></li>
+        {% endif %}
+
+        {% if box_data.favorite %}
+          <li><span class="fav_status">Is in your <b>Favorites</b> list.</span><input type="button" class="btn btn-outline-dark btn-sm float-right" id="fav" movie_id="{{ movie.id }}" value="Remove"></li>
+        {% else %}
+          <li><span class="fav_status">Is not marked as Favorite.</span><input type="button" class="btn btn-outline-dark btn-sm float-right" id="fav" movie_id="{{ movie.id }}" value="Add to Favorites"></li>
+        {% endif %}
+
+        {% if box_data.watch %}
+          <li><span class="watch_status">Is in your <b>Watchlist</b></span><input type="button" class="btn btn-outline-dark btn-sm float-right" id="watch" movie_id="{{ movie.id }}" value="Remove"></li>
+        {% else %}
+          <li><span class="watch_status">Is not in your Watchlist.</span><input type="button" class="btn btn-outline-dark btn-sm float-right" id="watch" movie_id="{{ movie.id }}" value="Add to Watchlist"></li>
+        {% endif %}
+
+      {% else %}
+        <li><span class="seen_status">You haven't seen this film.</span><input type="button" class="btn btn-outline-dark btn-sm float-right" id="seen" movie_id="{{ movie.id }}" value="Mark Seen"></li>
+        <li><span class="fav_status">Is not marked as Favorite.</span><input type="button" class="btn btn-outline-dark btn-sm float-right" id="fav" movie_id="{{ movie.id }}" value="Add to Favorites"></li>
+        <li><span class="watch_status">Is not in your Watchlist.</span><input type="button" class="btn btn-outline-dark btn-sm float-right" id="watch" movie_id="{{ movie.id }}" value="Add to Watchlist"></li>
+      {% endif %}
+    </ul>
+    </div>
+  </div>
+ </div>
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+
+<script>
+$('#seen').click(function(){
+
+  $.ajax({
+    type: "POST",
+    url: "{% url 'buttons:mark_seen' %}",
+    data: {
+      'movie_id': $(this).attr('movie_id'),
+      'csrfmiddlewaretoken': '{{ csrf_token }}',
+    },
+    dataType: "json",
+    success: function(response) {
+      if (response['success']){
+        //alert(response.message);
+      
+        if (response['seen']){
+          $("#seen").prop("value", "Remove Seen");
+          $(".seen_status").html("You've seen this film, nice!");
+        }
+
+        else {
+          $("#seen").prop("value", "Mark Seen");
+          $(".seen_status").html("You haven't seen this film.");
+          $(".fav_status").html("Is not marked as favorite.");
+          $("#fav").prop("value", "Add to Favorites");
+        }
+      }
+      else {
+        alert('error - the View returned Success: False value')
+      }
+    }
+  });
+});
+
+$('#fav').click(function(){
+
+  $.ajax({
+    type: "POST",
+    url: "{% url 'buttons:mark_fav' %}",
+    data: {
+      'movie_id': $(this).attr('movie_id'),
+      'csrfmiddlewaretoken': '{{ csrf_token }}',
+    },
+    dataType: "json",
+    success: function(response) {
+      if (response['success']){
+        //alert(response.message);
+      
+        if (response['fav']){
+          $("#fav").prop("value", "Remove");
+          $(".fav_status").html("Is in your <b>Favorites</b> list.");
+          $(".seen_status").html("You've seen this film, nice!");
+          $("#seen").prop("value", "Remove Seen");
+        }
+
+        else {
+          $("#fav").prop("value", "Add to Favorites");
+          $(".fav_status").html("Is not marked as favorite.");
+        }
+      }
+      else {
+        alert('error - the View returned Success: False value')
+      }
+    }
+  });
+});
+
+$('#watch').click(function(){
+
+  $.ajax({
+    type: "POST",
+    url: "{% url 'buttons:mark_watch' %}",
+    data: {
+      'movie_id': $(this).attr('movie_id'),
+      'csrfmiddlewaretoken': '{{ csrf_token }}',
+    },
+    dataType: "json",
+    success: function(response) {
+      if (response['success']){
+        //alert(response.message);
+      
+        if (response['watch']){
+          $("#watch").prop("value", "Remove");
+          $(".watch_status").html("Is in your <b>Watchlist</b>");
+        }
+
+        else {
+          $("#watch").prop("value", "Add to Watchlist");
+          $(".watch_status").html("Is not in your Watchlist.");
+        }
+      }
+      else {
+        alert('error - the View returned Success: False value')
+      }
+    }
+  });
+});
+
+</script>
+
+{% endblock javascript %}
+
+
+
+

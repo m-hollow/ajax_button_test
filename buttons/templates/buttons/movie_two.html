@@ -1,0 +1,265 @@
+{% extends 'buttons/base.html' %}
+{% load static %}
+{% block title %}Button Ajax Tester - Movie Page{% endblock title %}
+{% block content %}
+
+<div class="container">
+ <div class="row">
+  <div class="col-6">
+    <img class="poster" src="{% static 'images/key_largo.jpg' %}">
+  </div>
+  <div class="col-6">
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="shadow p-3 mb-2 bg-light rounded">
+      <div class="mb-2 border-bottom">
+        <h5 class="lead">Your details for <i>{{ movie.name|upper }}</i></h5>
+      </div>
+
+      <div class="container">
+          {% if box_data %}
+          <div class="row p-1">
+            {% if box_data.seen %}
+            <div class="col-md-1 pl-0">
+              <img id="seen_check" class="checks" src="{% static 'images/check-square-solid.svg' %}">
+            </div>
+            <div class="col">
+              <span class="seen_status">You've seen it, nice!</span>
+            </div>
+            <div class="col-md-5">
+              <input type="button" class="btn btn-outline-dark btn-sm btn-block" id="seen" movie_id="{{ movie.id }}" value="Mark Not Seen">
+            </div>
+            {% else %}
+            <div class="col-md-1 pl-0">
+              <img id="seen_check" class="checks" src="{% static 'images/square-regular.svg' %}">
+            </div>
+            <div class="col">
+              <span class="seen_status">You haven't seen it</span>
+            </div>
+            <div class="col-md-5">
+              <input type="button" class="btn btn-outline-dark btn-sm btn-block" id="seen" movie_id="{{ movie.id }}" value="Mark as Seen">
+            </div>
+            {% endif %}
+          </div>
+          <div class="row p-1">
+            {% if box_data.favorite %}
+            <div class="col-md-1 pl-0">
+              <img id="fav_check" class="checks" src="{% static 'images/check-square-solid.svg' %}">
+            </div>
+            <div class="col">
+              <span class="fav_status">It's in your <b>Favorites</b> list</span>
+            </div>
+            <div class="col-md-5">
+              <input type="button" class="btn btn-outline-dark btn-sm btn-block" id="fav" movie_id="{{ movie.id }}" value="Remove">
+            </div>
+            {% else %}
+            <div class="col-md-1 pl-0">
+              <img id="fav_check" class="checks" src="{% static 'images/square-regular.svg' %}">
+            </div>
+            <div class="col">
+              <span class="fav_status">Not in Favorites list</span>
+            </div>
+            <div class="col-md-5">
+              <input type="button" class="btn btn-outline-dark btn-sm btn-block" id="fav" movie_id="{{ movie.id }}" value="Add to Favorites">
+            </div>
+            {% endif %}
+          </div>
+          <div class="row p-1">
+            {% if box_data.watch %}
+            <div class="col-md-1 pl-0">
+              <img id="watch_check" class="checks" src="{% static 'images/check-square-solid.svg' %}">
+            </div>
+            <div class="col">
+              <span class="watch_status">It's in your <b>Watchlist</b></span>
+            </div>
+            <div class="col-md-5">
+              <input type="button" class="btn btn-outline-dark btn-sm btn-block" id="watch" movie_id="{{ movie.id }}" value="Remove">
+            </div>
+            {% else %}
+            <div class="col-md-1 pl-0">
+              <img id="watch_check" class="checks" src="{% static 'images/square-regular.svg' %}">
+            </div>
+            <div class="col">
+              <span class="watch_status">Not in Watchlist</span>
+            </div>
+            <div class="col-md-5">
+              <input type="button" class="btn btn-outline-dark btn-sm btn-block" id="watch" movie_id="{{ movie.id }}" value="Add to Watchlist">
+            </div>
+            {% endif %}
+          </div>
+
+          {% else %}
+          <div class="row p-1">
+            <div class="col-md-1 pl-0">
+              <img id="seen_check" class="checks" src="{% static 'images/square-regular.svg' %}">
+            </div>
+            <div class="col">
+              <span class="seen_status">You haven't seen it</span>
+            </div>
+            <div class="col-md-5">
+              <input type="button" class="btn btn-outline-dark btn-sm btn-block" id="seen" movie_id="{{ movie.id }}" value="Mark Seen">
+            </div>
+          </div>
+          <div class="row p-1">
+            <div class="col-md-1 pl-0">
+              <img id="fav_check" class="checks" src="{% static 'images/square-regular.svg' %}">
+            </div>
+            <div class="col">
+              <span class="fav_status">Not in Favorites list</span>
+            </div>
+            <div class="col-md-5">
+              <input type="button" class="btn btn-outline-dark btn-sm btn-block" id="fav" movie_id="{{ movie.id }}" value="Add to Favorites">
+            </div>
+          </div>
+          <div class="row p-1">
+            <div class="col-md-1 pl-0">
+              <img id="watch_check" class="checks" src="{% static 'images/square-regular.svg' %}">
+            </div>
+            <div class="col">
+              <span class="watch_status">Not in Watchlist</span>
+            </div>
+            <div class="col-md-5">
+              <input type="button" class="btn btn-outline-dark btn-sm btn-block" id="watch" movie_id="{{ movie.id }}" value="Add to Watchlist">
+            </div>
+          </div>
+          {% endif %}
+      </div> <!-- ends the container grid -->
+    </div> <!-- ends the shadowed box -->
+  </div> <!-- ends the right side columns -->
+ </div> <!-- ends the one main row -->
+</div> <!-- ends the total container -->
+
+{% endblock content %}
+
+{% block javascript %}
+
+<script>
+
+var padEmptyUrl = "{% static 'images/clipboard-regular.svg' %}";
+var padCheckedUrl = "{% static 'images/clipboard-check-solid.svg' %}";
+
+var squareUrl = "{% static 'images/square-regular.svg' %}";
+var checkSquareUrl = "{% static 'images/check-square-solid.svg' %}";
+
+$('#seen').on("click", function(){
+
+  $.ajax({
+    type: "POST",
+    url: "{% url 'buttons:mark_seen' %}",
+    data: {
+      'movie_id': $(this).attr('movie_id'),
+      'csrfmiddlewaretoken': '{{ csrf_token }}',
+    },
+    dataType: "json",
+    success: function(response) {
+
+      // new approach: simply swap 'src' of img tag on click; no need to create an image object in function
+      // var image = new Image();
+      // image.src = padCheckedUrl;
+      // image.style.height = '20px';
+      // image.style.widght = '20px';
+
+      if (response['success']){
+        //alert(response.message);
+      
+        if (response['seen']){
+          $("#seen").prop("value", "Mark Not Seen");
+          $(".seen_status").html("You've seen it, nice!");  
+          $("#seen_check").attr("src", checkSquareUrl);
+        }
+
+        else {
+          $("#seen").prop("value", "Mark Seen");
+          $(".seen_status").html("You haven't seen it");
+          $("#seen_check").attr("src", squareUrl);
+
+          $(".fav_status").html("Not in Favorites list");
+          $("#fav").prop("value", "Add to Favorites");
+          $("#fav_check").attr("src", squareUrl);
+        }
+      }
+      else {
+        alert('error - the View returned Success: False value')
+      }
+    }
+  });
+});
+
+$('#fav').on("click", function(){
+
+  $.ajax({
+    type: "POST",
+    url: "{% url 'buttons:mark_fav' %}",
+    data: {
+      'movie_id': $(this).attr('movie_id'),
+      'csrfmiddlewaretoken': '{{ csrf_token }}',
+    },
+    dataType: "json",
+    success: function(response) {
+      if (response['success']){
+        //alert(response.message);
+      
+        if (response['fav']){
+          $("#fav").prop("value", "Remove");
+          $("#fav_check").attr("src", checkSquareUrl);
+          $(".fav_status").html("It's in your <b>Favorites</b> list");
+          $(".seen_status").html("You've seen it, nice!");
+          $("#seen").prop("value", "Mark Not Seen");
+          $("#seen_check").attr("src", checkSquareUrl);
+        }
+
+        else {
+          $("#fav").prop("value", "Add to Favorites");
+          $("#fav_check").attr("src", squareUrl);
+          $(".fav_status").html("Not in Favorites list");
+        }
+      }
+      else {
+        alert('error - the View returned Success: False value')
+      }
+    }
+  });
+});
+
+$('#watch').on("click", function(){
+
+  $.ajax({
+    type: "POST",
+    url: "{% url 'buttons:mark_watch' %}",
+    data: {
+      'movie_id': $(this).attr('movie_id'),
+      'csrfmiddlewaretoken': '{{ csrf_token }}',
+    },
+    dataType: "json",
+    success: function(response) {
+      if (response['success']){
+        //alert(response.message);
+      
+        if (response['watch']){
+          $("#watch").prop("value", "Remove");
+          $("#watch_check").attr("src", checkSquareUrl);
+          $(".watch_status").html("It's in your <b>Watchlist</b>");
+        }
+
+        else {
+          $("#watch").prop("value", "Add to Watchlist");
+          $("#watch_check").attr("src", squareUrl);
+          $(".watch_status").html("Not in your Watchlist");
+        }
+      }
+      else {
+        alert('error - the View returned Success: False value')
+      }
+    }
+  });
+});
+
+</script>
+
+{% endblock javascript %}
+
+
+
+

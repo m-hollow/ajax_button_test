@@ -1,10 +1,10 @@
 {% extends 'buttons/base.html' %}
+{% load static %}
 {% block title %}Button Ajax Tester - Movie Page{% endblock title %}
 
 {% block content %}
 
-
-
+<img class="poster" src="{% static 'images/key_largo.jpg' %}">
 
 <div class="shadow p-3 mb-5 bg-light rounded">
         <div class="mb-2 border-bottom">
@@ -89,5 +89,10 @@
 
 {% endblock content %}
 
+<!-- I think the trick here is going to be how to treat your former <action> capture
+    as the data to be serialized -->
+
 {% block javascript %}
+
+
 {% endblock javascript %}

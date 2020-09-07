@@ -1,0 +1,11 @@
+/* make the movie poster smaller */
+
+.poster {
+    height: 500px;
+    width: auto;
+}
+
+.checks {
+    height: 23px;
+    width: auto;
+}

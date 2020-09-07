@@ -1,0 +1,74 @@
+{% extends 'buttons/base.html' %}
+{% load static %}
+{% block title %}Button Ajax Tester - Movie Page{% endblock title %}
+
+{% block content %}
+
+<img class="poster" src="{% static 'images/key_largo.jpg' %}">
+
+<input type="button" id="seen" movie_id="{{ movie.id }}" value="Mark Seen">
+
+<input type="button" id="favorite" movie_id="{{ movie.id }}" value="Mark Favorite">
+
+<h5>User Details:</h5>
+<p>Seen: {{ box_data.seen }}</p>
+<p>Favorite: {{ box_data.favorite }}</p>
+
+
+<!-- next step: give the value print-outs above an id, so you can modify them in the success portion of the js scripts. -->
+<!-- but before that, finally do the jQuery local install and confirm those error messages aren't showing up in browser console -->
+
+
+<!-- idea for using a single view: add a 'name' to each input, specific to action, e.g. name="mark_seen"; the name will be stored
+  in the QueryDict tored in the request POST object, as a key, and you can do a conditional check on the presence of this key: if 'mark_seen' in self.request.POST (this is in the view). You'd stil have multiple js functions, but they will all call the same view -->
+
+{% endblock content %}
+
+
+
+{% block javascript %}
+
+<script>
+
+$('#seen').click(function(){
+
+    $.ajax({
+        type: "POST",
+        url: "{% url 'buttons:mark_seen' %}",
+        data: {
+          'movie_id': $(this).attr('movie_id'),
+          'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        dataType: "json",
+        success: function(response) {
+          alert(response.message);
+
+          $("#seen").prop("value", "Remove Seen");
+        }
+    });
+});
+
+
+$('#favorite').click(function(){
+
+    $.ajax({
+        type: "POST",
+        url: "{% url 'buttons:mark_favorite' %}",
+        data: {
+          'movie_id': $(this).attr('movie_id'),
+          'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        dataType: "json",
+        success: function(response) {
+          alert(response.message);
+        }
+    });
+});
+
+</script>
+
+{% endblock javascript %}
+
+
+
+
